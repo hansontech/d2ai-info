@@ -47,10 +47,44 @@ This application is a Vue (Vue 3) application integrated with AWS Amplify, strea
 - **API**: Ready-to-use GraphQL endpoint with AWS AppSync.
 - **Database**: Real-time database powered by Amazon DynamoDB.
 
+## Local development
+
+1. Run the following shell command
+    ```
+    npm run serve
+    ```
+  * The command has the output similar to:
+    ```
+    VITE v5.4.10  ready in 167 ms
+
+    ➜  Local:   http://localhost:5173/
+    ➜  Network: use --host to expose
+    ➜  press h + enter to show help
+    ```
+2. Debug over Visual Studio Code
+  * Run->Start Debugging
+  * Logs show over [DEBUG CONSOLE] of VSC.
+
+
+## Build project
+
+```
+npm run build
+```
+
 ## Deploying to AWS
 
 For detailed instructions on deploying your application, refer to the [deployment section](https://docs.amplify.aws/vue/start/quickstart/#deploy-a-fullstack-app-to-aws) of our documentation.
 
+Run the following steps to commit source.
+
+Push to the `main` branch will cause deployment automatically.
+
+```
+git add .
+git commit -am "added changes"
+git push
+```
 
 ## Security
 
