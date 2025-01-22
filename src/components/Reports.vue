@@ -7,69 +7,63 @@
   interface Report {
     name: string;
     title: string;
+    folder: string;
     abstract: string;
     pdf: string;
   }
   let reports = ref<Report[]>([])
   onMounted(async () => {
     try {
-        const listResult = await list({
-	        path: 'reports/',
-          options:{
-            subpathStrategy: { strategy:'exclude' }
-          }
-        });
-        // console.log(listResult)
-        if (listResult.items.length > 1) { // means there are some report files
-          for (let item of listResult.items) {
-            // console.log(item)
-            let filePath = item.path
-            let filePathParts = filePath.split('.')
-            if (filePathParts.length >= 2) {
-              let reportFileFullNameWithPath = filePathParts[0]
-              let reportFileType = filePathParts[1]
-              if (reportFileType === 'json') { // The metafile for a report is stored as a JSON
-                let reportFileName = reportFileFullNameWithPath.split('reports/')[1]
-                let report: Report = {
-                  name: '',
-                  abstract: '',
-                  pdf: '',
-                  title: ''
-                } 
-                report.name = reportFileName
-                const result = await downloadData({
-                  path: `reports/${reportFileName}.json`,
+        const reportsResult = await downloadData({
+                  path: 'reports/reports.json',
                   options: {
                     // Specify a target bucket using name assigned in Amplify Backend
                     bucket: "d2aiInfoStorage"
                   }
                 }).result;
-                
-                let reportMetaJsonStr = await result.body.text()
-                // console.log(reportMetaJsonStr)
-                let reportMetaJson = JSON.parse(reportMetaJsonStr)
-                const reportAbstractResult = await downloadData({
-                  path: `reports/${reportFileName}/${reportMetaJson.abstract}`,
+        let reportsList = JSON.parse(await reportsResult.body.text())['reports']
+        console.log('read reports.json', reportsList)
+        for (let reportItem of reportsList) {
+          const reportMetaResult = await downloadData({
+                  path: `reports/${reportItem['folder']}/report_meta.json`,
                   options: {
                     // Specify a target bucket using name assigned in Amplify Backend
                     bucket: "d2aiInfoStorage"
                   }
                 }).result;
-                report.abstract = await reportAbstractResult.body.text()
-                report.pdf = reportMetaJson.pdf
-                report.title = reportMetaJson.title
-                reports.value.push(report) 
-              }
-            }
-          }
-          console.log(reports)
+          let report: Report = {
+            name: '',
+            abstract: '', // save the content directly
+            folder: reportItem['folder'],
+            pdf: '',
+            title: ''
+          } 
+          let reportMetaJsonStr = await reportMetaResult.body.text()
+          let reportMetaJson = JSON.parse(reportMetaJsonStr)
+          report.pdf = reportMetaJson['pdf']
+          const reportAbstractResult = await downloadData({
+                  path: `reports/${reportItem['folder']}/${reportMetaJson.abstract}`,
+                  options: {
+                    // Specify a target bucket using name assigned in Amplify Backend
+                    bucket: "d2aiInfoStorage"
+                  }
+                }).result
+          let reportAbstractStr = await reportAbstractResult.body.text()
+          report.abstract = reportAbstractStr
+          report.title = reportMetaJson.title
+
+          // save to the report list structure
+          reports.value.push(report) 
+
         }
+        // console.log(reports)
       } catch (error) {
-        console.log(`Error: ${error}`)
+        // console.log("Error: ", error.message)
+        console.log("error:", error)
       }
   })
   const downloadClick = async (report:Report) => {
-      let downloadPath = `reports/${report.name}/${report.pdf}`
+      let downloadPath = `reports/${report.folder}/${report.pdf}`
       console.log('downloadClick: ', downloadPath)
       try {
         const result = await downloadData({
@@ -98,11 +92,15 @@
     </v-app-bar>
 
     <!-- Main content with a hero section -->
-    <v-main>
-      <v-container>
-        <v-row>  
+    <v-main class="mt-16">
+      <v-container class="mt-16">
+        <v-row class="mt-16 pt-16" style="height:300px">
+          <v-col>
+          </v-col>
+        </v-row>
+        <v-row class="mt-16 pt-16">  
           <v-col v-if="reports.length > 0">
-            <v-card v-for="(report) in reports" :key="report.name" elevation="2" class="pa-10" outlined>
+            <v-card v-for="(report) in reports" :key="report.name" elevation="2" class="pa-10 mt-4" outlined>
               <v-row align="center" justify="center">
                 <h1 class="display-1">{{ report.title }}</h1>
               </v-row>
