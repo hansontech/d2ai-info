@@ -15,5 +15,6 @@ export default defineConfig({
   },
   build: {
     sourcemap: true, // Enables source maps for production builds
+    chunkSizeWarningLimit: 1600
   }
 })
