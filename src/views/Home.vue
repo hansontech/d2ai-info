@@ -1,8 +1,17 @@
 <script setup lang="ts">
   import { ref, onMounted, onBeforeMount } from 'vue'
   import VueMarkdown from 'vue-markdown-render'
+  import MarkdownIt from "markdown-it"
   import { downloadData, list } from 'aws-amplify/storage';
   import FileSaver from 'file-saver'
+
+  // Initialize Markdown parser
+  const md = new MarkdownIt();
+  // Function to render Markdown as HTML
+  const renderMarkdown = (text:string) => {
+    return md.render(text);
+  };
+
   // Define the type of the objects in the array
   interface Report {
     name: string;
@@ -82,54 +91,36 @@
   };
 </script>
 <template>
-  <v-app>
-    <!-- Navigation bar -->
-    <v-app-bar app color="primary" dark>
-      <v-toolbar-title>AI Market Research</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn>Home</v-btn>
-      <v-btn>About</v-btn>
-    </v-app-bar>
-
-    <!-- Main content with a hero section -->
-    <v-main class="mt-16">
-      <v-container class="mt-16">
-        <v-row class="mt-16 pt-16" style="height:300px">
+      <v-container class="mt-1">
+        <v-row>
           <v-col>
+            <h3>
+              Following are the example market reseach reports that were created by the AI agent.
+            </h3>
+            <hr>
           </v-col>
         </v-row>
-        <v-row class="mt-16 pt-16">  
-          <v-col v-if="reports.length > 0">
-            <v-card v-for="(report) in reports" :key="report.name" elevation="2" class="pa-10 mt-4" outlined>
-              <v-row align="center" justify="center">
-                <h1 class="display-1">{{ report.title }}</h1>
-              </v-row>
-              <v-row style="border: 1px solid #000; height: 200px; overflow: auto;">
-                <v-col class="ml-4 mr-4">
-                  <vue-markdown class="mt-4" :source="report.abstract">
-                  </vue-markdown>
-                </v-col>
-              </v-row>
-              <v-row class="mt-6" align="center" justify="center">
+        <!-- Second Row: Multiple v-cards -->
+        <v-row v-if="reports.length > 0">
+          <v-col v-for="(report) in reports" :key="report.name" cols="12" sm="12" md="6" lg="6">
+            <v-card class="mx-auto pa-3" max-width="600">
+              <v-card-title class="text-h5">{{ report.title }}</v-card-title>
+              <v-card-text class="bg-grey-lighten-3" style="max-height: 200px; overflow-y: auto;">
+                <div v-html="renderMarkdown(report.abstract)"></div>
+              </v-card-text>
+              <v-card-actions>
                 <v-btn color="primary" large @click="downloadClick(report)">Download</v-btn>
-              </v-row>
+              </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
       </v-container>
-    </v-main>
-
-    <!-- Footer -->
-    <v-footer app color="primary" dark>
-      <v-col class="text-center white--text">© 2024 D2AI</v-col>
-    </v-footer>
-  </v-app>
 </template>
 <script setup lang="ts">
 </script>
 <script lang="ts">
   export default {
-    name: 'Reports'
+    name: 'Home'
   };
 </script>
 
