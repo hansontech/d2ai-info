@@ -91,7 +91,7 @@
   };
 </script>
 <template>
-      <v-container class="mt-1">
+      <v-container class="mt-10">
         <v-row>
           <v-col>
             <h3>
@@ -103,9 +103,9 @@
         <!-- Second Row: Multiple v-cards -->
         <v-row v-if="reports.length > 0">
           <v-col v-for="(report) in reports" :key="report.name" cols="12" sm="12" md="6" lg="6">
-            <v-card class="mx-auto pa-3" max-width="600">
+            <v-card class="mx-auto" max-width="600">
               <v-card-title class="text-h5">{{ report.title }}</v-card-title>
-              <v-card-text class="bg-grey-lighten-3" style="max-height: 200px; overflow-y: auto;">
+              <v-card-text class="bg-grey-lighten-3" style="max-height: 150px; overflow-y: auto;">
                 <div v-html="renderMarkdown(report.abstract)"></div>
               </v-card-text>
               <v-card-actions>
