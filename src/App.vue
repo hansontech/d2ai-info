@@ -9,6 +9,7 @@
       <v-spacer></v-spacer>
       <v-btn to="/">Home</v-btn>
       <v-btn to="/about">About</v-btn>
+      <v-btn to="/login">Login</v-btn>
       <!-- <v-btn to="/contact">Contact</v-btn> -->
     </v-app-bar>
 
