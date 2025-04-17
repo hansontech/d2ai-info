@@ -16,10 +16,13 @@ export const auth = defineAuth({
         }
       },
       callbackUrls: [
-        'http://localhost:3000/profile',
-        'https://www.d2ai.info/profile'
+        'http://localhost:5173',
+        'https://www.d2ai.info'
       ],
-      logoutUrls: ['http://localhost:3000/', 'https://www.d2ai.info']
+      logoutUrls: [
+        'http://localhost:5173/', 
+        'https://www.d2ai.info'
+      ]
     }
   }
 });
