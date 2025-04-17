@@ -9,8 +9,8 @@ export const auth = defineAuth({
     email: true,
     externalProviders: {
       google: {
-        clientId: secret('535189192813-nqu2lcrhhv8nd8hi53v7b146bhtu8qcs.apps.googleusercontent.com'),
-        clientSecret: secret('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'),
+        clientId: secret('GoogleClientId'),
+        clientSecret: secret('GoogleClientSecret'),
         attributeMapping: {
           email: 'email'
         }
