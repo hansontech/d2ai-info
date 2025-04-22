@@ -62,3 +62,26 @@ a {
   font-weight: 800;
   text-decoration: none;
 }
+
+.v-application {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.v-footer {
+  position: relative;
+  z-index: 1;
+}
+
+.v-navigation-drawer {
+  margin-bottom: 48px;
+}
+
+.v-navigation-drawer .v-list-item {
+  font-size: 1.1rem; /* Text size */
+}
+
+.v-navigation-drawer .v-icon {
+  font-size: 1.3rem; /* Icon size */
+}
