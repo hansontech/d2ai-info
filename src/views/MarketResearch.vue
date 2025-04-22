@@ -98,8 +98,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col class="d-flex align-end justify-center">
-            
+          <v-col>
             <h3>
               Following are the example market reseach reports that were created by the AI agent.
             </h3>
