@@ -108,10 +108,31 @@ onBeforeUnmount(() => {
           Market research
         </template>
       </v-btn>
-      <v-btn to="/user/dashboard">Data service</v-btn>
-      <v-btn to="/about">About</v-btn>
-      <v-btn to="/login" v-if="authStore.isLoggedIn"><v-icon>mdi-account</v-icon></v-btn>
-      <v-btn to="/login" v-if="authStore.isLoggedIn === false">Login</v-btn>
+      <v-btn to="/user/dashboard">
+        <template v-if="smAndDown">
+          <v-icon>mdi-animation</v-icon>
+        </template>
+        <template v-else>
+          Data service
+        </template>
+      </v-btn>
+      <v-btn to="/about">
+        <template v-if="smAndDown">
+          <v-icon>mdi-information-variant</v-icon>
+        </template>
+        <template v-else>
+          About
+        </template>
+      </v-btn>
+      <v-btn to="/login" v-if="authStore.isLoggedIn"><v-icon>mdi-account-circle</v-icon></v-btn>
+      <v-btn to="/login" v-if="authStore.isLoggedIn === false">
+        <template v-if="smAndDown">
+          <v-icon>mdi-account</v-icon>
+        </template>
+        <template v-else>
+          Login
+        </template>
+      </v-btn>
       <!-- <v-btn to="/contact">Contact</v-btn> -->
     </v-app-bar>
 
