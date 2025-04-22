@@ -2,6 +2,7 @@
 import { Hub } from 'aws-amplify/utils'
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores'
+import { useDisplay } from 'vuetify'
 
 // import { listenToAuthEvents } from '@/lib/auth'
 import { ref, computed, watch, provide, onMounted, onBeforeUnmount } from 'vue'
@@ -10,6 +11,8 @@ const router = useRouter()
 
 const route = useRoute()
 const showSidebar = computed(() => route.meta.requiresAuth === true)
+
+const { smAndDown } = useDisplay() // or mdAndDown
 
 function listenToAuthEvents(): void {
   let authStore = useAuthStore()
@@ -88,12 +91,27 @@ onBeforeUnmount(() => {
       <!-- Mobile Menu Button (Only shows when authenticated + mobile) -->
       <v-app-bar-nav-icon v-if="(user !== null && showSidebar) && isMobile" @click="drawer = !drawer" />
       <v-toolbar-title></v-toolbar-title>
+      <v-btn to="/">
+        <template v-if="smAndDown">
+          <v-icon>mdi-home</v-icon>
+        </template>
+        <template v-else>
+          Home
+        </template>
+      </v-btn>
       <v-spacer></v-spacer>
-      <v-btn to="/">Home</v-btn>
-      <v-btn to="/market-research">Market research</v-btn>
+      <v-btn to="/market-research">
+        <template v-if="smAndDown">
+          <v-icon>mdi-note-text</v-icon>
+        </template>
+        <template v-else>
+          Market research
+        </template>
+      </v-btn>
       <v-btn to="/user/dashboard">Data service</v-btn>
       <v-btn to="/about">About</v-btn>
-      <v-btn to="/login">Login</v-btn>
+      <v-btn to="/login" v-if="authStore.isLoggedIn"><v-icon>mdi-account</v-icon></v-btn>
+      <v-btn to="/login" v-if="authStore.isLoggedIn === false">Login</v-btn>
       <!-- <v-btn to="/contact">Contact</v-btn> -->
     </v-app-bar>
 
@@ -113,7 +131,7 @@ onBeforeUnmount(() => {
       v-model="drawer"
       :permanent="!isMobile"
       :temporary="isMobile"
-      :rail="isMobile && drawer"
+      :scrim="false"
       app
     >
       <Sidebar />

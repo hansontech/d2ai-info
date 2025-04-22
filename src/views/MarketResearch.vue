@@ -93,7 +93,7 @@
 <template>
       <v-container class="mt-10">
         <v-row>
-          <v-col style="height: 100px" class="d-flex align-end justify-center">
+          <v-col style="height: 300px" class="d-flex align-end">
             <h1>Market Research Generator</h1>
           </v-col>
         </v-row>
