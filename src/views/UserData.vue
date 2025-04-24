@@ -12,7 +12,7 @@
         @change="handleFileSelect"
       />
       <v-btn
-        color="primary"
+        color="cyan-darken-2"
         prepend-icon="mdi-plus"
         @click="triggerFileInput"
         class="mr-2"
