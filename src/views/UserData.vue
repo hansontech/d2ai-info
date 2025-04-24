@@ -1,7 +1,7 @@
 <template>
-  <div class="storage-container">
+  <v-container fluid>
     <!-- Toolbar -->
-    <div class="toolbar pa-4 bg-grey-lighten-4">
+    <v-toolbar density="compact" color="grey-lighten-3" class="px-4">
       <v-file-input
         ref="fileInput"
         v-model="selectedFiles"
@@ -11,14 +11,18 @@
         style="display: none"
         @change="handleFileSelect"
       />
+      
       <v-btn
         color="cyan-darken-2"
         prepend-icon="mdi-plus"
         @click="triggerFileInput"
         class="mr-2"
       >
-        Upload
+        <template v-if="mdAndUp">
+          Upload
+        </template>
       </v-btn>
+
       <v-btn
         color="error"
         prepend-icon="mdi-delete"
@@ -26,8 +30,11 @@
         :disabled="!selectedFile"
         class="mr-2"
       >
-        Delete
+        <template v-if="mdAndUp">
+          Delete
+        </template>
       </v-btn>
+
       <v-btn
         color="success"
         prepend-icon="mdi-download"
@@ -35,8 +42,13 @@
         :disabled="!selectedFile"
         class="mr-2"
       >
-        Download
+        <template v-if="mdAndUp">
+          Download
+        </template>
       </v-btn>
+
+      <v-spacer></v-spacer>
+
       <v-btn
         icon
         @click="refreshFiles"
@@ -44,7 +56,7 @@
       >
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
-    </div>
+    </v-toolbar>
 
     <!-- File Table -->
     <v-table
@@ -57,7 +69,9 @@
         <tr>
           <th>Name</th>
           <th class="text-right">Size</th>
-          <th>Modified</th>
+          <template v-if="mdAndUp">
+            <th>Modified</th>
+          </template>
           <th>Actions</th>
         </tr>
       </thead>
@@ -73,7 +87,9 @@
             {{ getFileName(file.key) }}
           </td>
           <td class="text-right">{{ formatFileSize(file.size) }}</td>
-          <td>{{ formatDate(file.lastModified) }}</td>
+          <template v-if="mdAndUp">
+            <td>{{ formatDate(file.lastModified) }}</td>
+          </template>
           <td>
             <v-btn
               icon
@@ -130,7 +146,7 @@
         size="64"
       ></v-progress-circular>
     </v-overlay>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -143,7 +159,9 @@ import {
   remove 
 } from 'aws-amplify/storage';
 import { getCurrentUser } from 'aws-amplify/auth';
+import { useDisplay } from 'vuetify'
 
+const { smAndDown, mdAndUp } = useDisplay() // or mdAndDown
 
 interface S3File {
   key: string;
@@ -346,5 +364,12 @@ onMounted(async () => {
 
 .v-table {
   --v-table-row-height: 56px;
+}
+
+.text-truncate {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

@@ -31,7 +31,6 @@
                   }
                 }).result;
         let reportsList = JSON.parse(await reportsResult.body.text())['reports']
-        console.log('read reports.json', reportsList)
         for (let reportItem of reportsList) {
           const reportMetaResult = await downloadData({
                   path: `reports/${reportItem['folder']}/report_meta.json`,
