@@ -20,7 +20,6 @@ onMounted(async () => {
     <v-list-item
       v-for="item in navItems"
       :key="item.title"
-      :prepend-icon="item.icon"
       :to="item.to">
       <v-list-item-title class="text-body-1">
         {{ item.title }}

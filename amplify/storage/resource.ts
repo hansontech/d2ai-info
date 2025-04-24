@@ -4,6 +4,9 @@ export const storage = defineStorage({
     name: 'd2aiInfoStorage',
     isDefault: true, // default storage
     access: (allow) => ({
+      'users/{entity_id}/*': [
+        allow.entity('identity').to(['read','write','delete'])
+      ],
       'reports/*': [
         allow.guest.to(['read', 'write']) // additional actions such as "write" and "delete" can be specified depending on use cases
       ],
@@ -14,6 +17,6 @@ export const storage = defineStorage({
       'picture-submissions/*': [
         allow.authenticated.to(['read','write']),
         allow.guest.to(['read', 'write'])
-      ],
+      ]
     })
 });

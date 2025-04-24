@@ -5,6 +5,8 @@ import Contact from '@/views/Contact.vue';
 import Login from '@/views/Login.vue';
 import Profile from '@/views/Profile.vue';
 import Dashboard from '@/views/Dashboard.vue';
+import UserData from '@/views/UserData.vue'
+
 import Todos from '@/components/Todos.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import MarketResearch from '@/views/MarketResearch.vue';
@@ -33,7 +35,7 @@ export const routes: RouteRecordRaw[] = [
       { path: 'dashboard', component: Dashboard },
       { path: 'training', component: Todos },
       { path: 'tasks', component: Todos },
-      { path: 'data', component: Todos },
+      { path: 'data', component: UserData },
       // more user-specific pages
     ]
   },

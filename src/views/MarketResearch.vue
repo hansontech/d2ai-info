@@ -91,9 +91,9 @@
   };
 </script>
 <template>
-      <v-container class="mt-10">
+      <v-container>
         <v-row>
-          <v-col style="height: 300px" class="d-flex align-end">
+          <v-col style="height: 100px" class="d-flex align-end">
             <h1>Market Research Generator</h1>
           </v-col>
         </v-row>
@@ -123,7 +123,7 @@
 </script>
 <script lang="ts">
   export default {
-    name: 'Home'
+    name: 'MarketResearch'
   };
 </script>
 

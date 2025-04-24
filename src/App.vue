@@ -12,7 +12,7 @@ const router = useRouter()
 const route = useRoute()
 const showSidebar = computed(() => route.meta.requiresAuth === true)
 
-const { smAndDown } = useDisplay() // or mdAndDown
+const { smAndDown, mdAndUp } = useDisplay() // or mdAndDown
 
 function listenToAuthEvents(): void {
   let authStore = useAuthStore()
@@ -87,7 +87,7 @@ onBeforeUnmount(() => {
 <template>
   <v-app>
     <!-- Persistent Navigation Bar -->
-    <v-app-bar app color="primary" dark>
+    <v-app-bar app color="primary" dark flat>
       <!-- Mobile Menu Button (Only shows when authenticated + mobile) -->
       <v-app-bar-nav-icon v-if="(user !== null && showSidebar) && isMobile" @click="drawer = !drawer" />
       <v-toolbar-title></v-toolbar-title>
@@ -137,10 +137,8 @@ onBeforeUnmount(() => {
     </v-app-bar>
 
     <!-- Page Content -->
-    <v-main>
-      <v-container>
+    <v-main style="padding-top: 70px !important;">
         <router-view></router-view>
-      </v-container>
       <!-- Footer -->
       <v-footer app color="primary" height="48" dark>
         <span>© 2024 D2AI</span>
@@ -148,7 +146,7 @@ onBeforeUnmount(() => {
     </v-main>
     <v-navigation-drawer v-if="authStore.isLoggedIn && showSidebar"
       color="grey-lighten-4"
-      width="180"
+      width="140"
       v-model="drawer"
       :permanent="!isMobile"
       :temporary="isMobile"
@@ -168,14 +166,9 @@ export default {
 
 <style scoped>
 /* Ensure proper spacing when sidebar is hidden */
-.v-main {
-  margin-left: 0;
-}
 
 /* Desktop: Add margin when sidebar is visible */
 @media (min-width: 960px) {
-  .v-main {
-    margin-right: 180px; /* Match sidebar width */
-  }
+
 }
 </style>

@@ -12,10 +12,12 @@
 <template>
     <authenticator>
       <template v-slot="{ user, signOut }">
+        <v-container>
         <v-card class="mt-3">
           <v-card-title> Logged in as {{ user.signInDetails.loginId }}</v-card-title>
         </v-card>
         <v-btn color="secondary" class="mt-3" @click="signOut">Sign Out</v-btn>
+      </v-container>
       </template>
     </authenticator>
 </template>
