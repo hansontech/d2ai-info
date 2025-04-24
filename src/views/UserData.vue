@@ -106,13 +106,11 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="secondary"
             variant="text"
             @click="deleteDialog = false"
           >Cancel</v-btn>
           <v-btn
             color="error"
-            variant="tonal"
             @click="confirmDelete"
           >Delete</v-btn>
         </v-card-actions>
@@ -172,20 +170,22 @@ const fetchFiles = async () => {
   try {
     const prefix = await getUserPrefix();
     loading.value = true;
-    console.log('prefix: ', prefix)
   
     const { items } = await list({ 
-      path: `${prefix}/*`,
+      path: prefix,
       options: {
         pageSize: 100
       }
     });
     
-    files.value = items.map(item => ({
-      key: item.path,
-      size: item.size || 0,
-      lastModified: item.lastModified ? new Date(item.lastModified) : new Date()
-    }));
+    files.value = items
+      .filter(item => !item.path.endsWith('/')) // exclude folders  
+      .map(item => ({
+        key: item.path,
+        size: item.size || 0,
+        lastModified: item.lastModified ? new Date(item.lastModified) : new Date(),
+        isFolder: item.path.endsWith('/'),
+      }));
     
   } catch (error) {
     console.error('Error fetching files:', error);
@@ -321,9 +321,6 @@ const getFileIcon = (filename: string) => {
 
 // Initialize
 onMounted(async () => {
-  console.log('mounted')
-  let user = await getCurrentUser()
-  console.log(user)
   await fetchFiles()
 });
 </script>
