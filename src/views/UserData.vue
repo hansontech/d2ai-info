@@ -144,6 +144,8 @@ import {
   list, 
   remove 
 } from 'aws-amplify/storage';
+import { getCurrentUser } from 'aws-amplify/auth';
+
 
 interface S3File {
   key: string;
@@ -166,15 +168,14 @@ const getUserPrefix = async (): Promise<string> => {
 
 // Fetch files from S3
 const fetchFiles = async () => {
-  console.error('test test')
-  const prefix = await getUserPrefix();
-  loading.value = true;
-  try {
 
-    console.error('prefix: ', prefix)
-    
+  try {
+    const prefix = await getUserPrefix();
+    loading.value = true;
+    console.log('prefix: ', prefix)
+  
     const { items } = await list({ 
-      path: prefix,
+      path: `${prefix}/*`,
       options: {
         pageSize: 100
       }
@@ -321,6 +322,8 @@ const getFileIcon = (filename: string) => {
 // Initialize
 onMounted(async () => {
   console.log('mounted')
+  let user = await getCurrentUser()
+  console.log(user)
   await fetchFiles()
 });
 </script>
