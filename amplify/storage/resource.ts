@@ -5,6 +5,7 @@ export const storage = defineStorage({
     isDefault: true, // default storage
     access: (allow) => ({
       'users/{entity_id}/*': [
+        allow.guest.to(['read']),
         allow.entity('identity').to(['read','write','delete'])
       ],
       'reports/*': [

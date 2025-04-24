@@ -136,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '../stores'
 import { ref, onMounted } from 'vue';
 import { 
   uploadData, 
@@ -166,9 +166,13 @@ const getUserPrefix = async (): Promise<string> => {
 
 // Fetch files from S3
 const fetchFiles = async () => {
+  console.error('test test')
+  const prefix = await getUserPrefix();
   loading.value = true;
   try {
-    const prefix = await getUserPrefix();
+
+    console.error('prefix: ', prefix)
+    
     const { items } = await list({ 
       path: prefix,
       options: {
@@ -181,6 +185,7 @@ const fetchFiles = async () => {
       size: item.size || 0,
       lastModified: item.lastModified ? new Date(item.lastModified) : new Date()
     }));
+    
   } catch (error) {
     console.error('Error fetching files:', error);
   } finally {
@@ -314,7 +319,10 @@ const getFileIcon = (filename: string) => {
 };
 
 // Initialize
-onMounted(fetchFiles);
+onMounted(async () => {
+  console.log('mounted')
+  await fetchFiles()
+});
 </script>
 
 <style scoped>
