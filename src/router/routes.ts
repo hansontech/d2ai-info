@@ -10,6 +10,7 @@ import UserData from '@/views/UserData.vue'
 import Todos from '@/components/Todos.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import MarketResearch from '@/views/MarketResearch.vue';
+import ModelConfiguration from '@/views/ModelConfiguration.vue';
 
 // Define routes with proper type
 export const routes: RouteRecordRaw[] = [
@@ -33,7 +34,7 @@ export const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
     children: [
       { path: 'dashboard', component: Dashboard },
-      { path: 'training', component: Todos },
+      { path: 'training', component: ModelConfiguration },
       { path: 'tasks', component: Todos },
       { path: 'data', component: UserData },
       // more user-specific pages
