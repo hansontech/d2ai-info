@@ -47,7 +47,15 @@
                     </v-btn>
                   </v-col>
                 </v-row>
-            
+                <v-row>
+                    <v-col>
+                      <v-select
+                          v-model="currentConfig.modelTrainingCodeName"
+                          :items="['DEMO', 'TOTEM']"
+                          label="Model Training Code Name"
+                      ></v-select>
+                    </v-col>
+                </v-row>
                 <v-row>
                     <v-col cols="12" md="6">
                     <v-text-field 
@@ -235,11 +243,11 @@ import { run } from 'node:test';
         return `users/${user.username}`;
     };
 
-    const client = generateClient<Schema>();
-
+  
     // Configuration state
     const currentConfig = ref({
-        modelName: '',
+        modelName: 'DemoModel',
+        modelTrainingCodeName: 'DEMO',
         learningRate: 0.001,
         batchSize: 32,
         epochs: 10,
@@ -354,11 +362,24 @@ import { run } from 'node:test';
     }
   };
   const runTraining = async () => {
+    console.log('Training called');
     training.value = true;
     try {
+      // Generate a client for the API
+      const client = generateClient<Schema>();
+
+      // Run model training
+      let result = client.queries.runTraining({
+        modelConfig: JSON.parse(JSON.stringify(currentConfig.value))
+      })
+      console.log('Training instance launch result: ', result)
+
+      // API call for verification
       client.queries.sayHello({
         name: "Amplify",
       })
+      console.log('Training started')
+
     } catch (error) {
       //-- showSnackbar('Error saving configuration', 'error');
       console.error(error);

@@ -4,6 +4,15 @@
   import MarkdownIt from "markdown-it"
   import { downloadData, list } from 'aws-amplify/storage';
   import FileSaver from 'file-saver'
+  import { useDisplay } from 'vuetify'
+  
+  const { smAndDown, mdAndUp} = useDisplay() 
+  
+  let newResearchTopic = ref<string>('')
+  const createReport = (researchTopic:string) => {
+    // TODO
+  };
+  let isCreatingReport = ref<boolean>(false)
 
   // Initialize Markdown parser
   const md = new MarkdownIt();
@@ -97,14 +106,45 @@
           </v-col>
         </v-row>
         <v-row>
+          <v-col cols="2" sm="2" md="3" >
+            <v-tooltip bottom text="Create a new research report of the topic">
+              <template v-slot:activator="{ props } ">
+              <v-btn outlined elevation="2"
+                        v-bind="props"
+                        :disabled="true"
+                        color="primary"
+                        variant="text"
+                        @click="createReport(newResearchTopic)"
+                        :loading="isCreatingReport"
+                        >
+                        <v-icon start>mdi-creation</v-icon>
+                        <template v-if="mdAndUp">
+                          Create Report
+                        </template>
+                        </v-btn>
+              </template>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="10" sm="10" md="9">
+            <v-text-field 
+                        :disabled="true"  
+                        v-model="newResearchTopic" 
+                        label="New research topic" 
+                        type="string" 
+                    ></v-text-field>
+     
+          </v-col>
+        </v-row>
+
+        <v-row>
           <v-col>
             <h3>
-              Following are the example market reseach reports that were created by the AI agent.
+              Following are the market reseach reports that have been created by Agent.
             </h3>
             <hr>
           </v-col>
         </v-row>
-        <!-- Second Row: Multiple v-cards -->
+           <!-- Second Row: Multiple v-cards -->
         <v-row v-if="reports.length > 0">
           <v-col v-for="(report) in reports" :key="report.name" cols="12" sm="12" md="6" lg="6">
             <v-card class="mx-auto bg-brown-lighten-5" max-width="600">
