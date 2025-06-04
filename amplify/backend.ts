@@ -38,15 +38,3 @@ backend.runTraining.resources.lambda.addToRolePolicy(
       resources: ['*'] // Replace with your IAM role ARN
   })
 );
-backend.runTraining.resources.lambda.addToRolePolicy(
-  new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ["ec2:RunInstances"],
-      resources: [
-        "arn:aws:ec2:REGION:ACCOUNT_ID:instance/*",
-        "arn:aws:ec2:REGION:ACCOUNT_ID:subnet/*",
-        "arn:aws:ec2:REGION:ACCOUNT_ID:volume/*",
-        "arn:aws:ec2:REGION:ACCOUNT_ID:security-group/*"
-      ]
-  })
-);
