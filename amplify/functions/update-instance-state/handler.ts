@@ -6,17 +6,14 @@ import { DynamoDBDocumentClient, UpdateCommand, QueryCommand } from '@aws-sdk/li
 const dynamoClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
 
-interface EC2StateChangeEvent {
-  source: string[];
-  'detail-type': string[];
-  detail: {
-    'instance-id': string;
-    'state': string;
-    'previous-state'?: string;
-  };
+// Define the detail structure for EC2 state change events
+interface EC2StateChangeDetail {
+  'instance-id': string;
+  'state': string;
+  'previous-state'?: string;
 }
 
-export const handler: EventBridgeHandler<'EC2 Instance State-change Notification', EC2StateChangeEvent, void /* return type */> = async (event) => {
+export const handler: EventBridgeHandler<'EC2 Instance State-change Notification', EC2StateChangeDetail, void /* return type */> = async (event) => {
   try {
     console.log('Received EC2 state change event:', JSON.stringify(event, null, 2));
     
@@ -29,8 +26,7 @@ export const handler: EventBridgeHandler<'EC2 Instance State-change Notification
       return;
     }
 
-    // Check if instance exists in our database
-    const queryCommand = new QueryCommand({
+    let query = {
       TableName: process.env.USER_INSTANCES_TABLE_NAME,
       IndexName: process.env.USER_INSTANCES_INSTANCE_INDEX, // Your GSI name
       KeyConditionExpression: "#instanceId = :instanceId",
@@ -40,7 +36,11 @@ export const handler: EventBridgeHandler<'EC2 Instance State-change Notification
       ExpressionAttributeValues: {
         ":instanceId": instanceId
       }
-    });
+    } 
+    console.log('Querying DynamoDB with params:', JSON.stringify(query, null, 2));
+
+    // Check if instance exists in our database
+    const queryCommand = new QueryCommand(query);
 
     const existingItems = await docClient.send(queryCommand);
     
