@@ -119,10 +119,10 @@
                 <v-table>
                     <thead>
                     <tr>
-                        <th>Type</th>
-                        <th>Units/Size</th>
-                        <th>Activation</th>
-                        <th>Actions</th>
+                        <th style="width: 40%;">Type</th>
+                        <th style="width: 15%;">Units/Size</th>
+                        <th style="width: 40%;">Activation</th>
+                        <th style="width: 5%;">Actions</th>
                     </tr>
                     </thead>
                     <tbody>

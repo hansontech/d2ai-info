@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
     <v-row class="controls">
-         <v-col cols="5" sm="4" md="4">
+         <v-col cols="8" sm="8" md="8">
           <v-select
             id="instance-status-select"
             v-model="selectedInstanceQueryStates"
@@ -20,7 +20,7 @@
           ></v-select>
         </v-col>
         
-        <v-col cols="4" sm="3" md="3">
+        <v-col cols="4" sm="4" md="4">
           <v-select
             id="time-range"
             v-model="timeRangeHours"
