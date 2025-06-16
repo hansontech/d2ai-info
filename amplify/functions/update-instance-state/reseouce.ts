@@ -1,10 +1,10 @@
 import { defineFunction } from '@aws-amplify/backend';
 
-export const runTraining = defineFunction({
+export const updateInstanceState = defineFunction({
   // optionally specify a name for the Function (defaults to directory name)
-  name: 'run-training',
+  name: 'update-instance-state',
   // optionally specify a path to your handler (defaults to "./handler.ts")
   entry: './handler.ts',
-  timeoutSeconds: 300, // 5 minutes
-  memoryMB: 1024,
+  timeoutSeconds: 60,
+  memoryMB: 512
 });

@@ -1,6 +1,8 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { sayHello } from "../functions/say-hello/reseouce"
 import { runTraining } from "../functions/run-training/reseouce"
+import { getInstanceLogs } from "../functions/get-instance-logs/reseouce"
+import { queryInstances } from "../functions/query-instances/reseouce";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -28,8 +30,27 @@ const schema = a.schema({
       modelConfig: a.json(),
     })
     .returns(a.json())
-    .authorization(allow => [allow.publicApiKey()]) // .guest()])
+    .authorization(allow => [allow.authenticated()]) // .publicApiKey() .guest()])
     .handler(a.handler.function(runTraining)),
+  getInstanceLogs: a
+    .query()
+    .arguments({
+      instanceId: a.string(),
+      lastMinutes: a.string()
+    })
+    .returns(a.json())
+    .authorization(allow => [allow.authenticated()]) // .guest()])
+    .handler(a.handler.function(getInstanceLogs)),
+  queryInstances: a
+    .query()
+    .arguments({
+      queryInstanceStates: a.string().array(),
+      timeRangeHours: a.integer()
+    })
+    .returns(a.json())
+    .authorization(allow => [allow.authenticated()]) // .guest()])
+    .handler(a.handler.function(queryInstances)),
+
 });
 
 export type Schema = ClientSchema<typeof schema>;

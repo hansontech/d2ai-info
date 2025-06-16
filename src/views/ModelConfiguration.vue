@@ -172,6 +172,43 @@
                 >
                     Add Layer
                 </v-btn>
+
+                <v-divider class="my-4"></v-divider>
+
+                <v-card-title class="px-0">Running Instance</v-card-title>
+                
+                <v-row>
+                  <v-col>
+                    <v-select
+                        v-model="currentConfig.instanceType"
+                        label="EC2 Instance Type"
+                        :items="[
+                          {typeId: 't2.nano', typeDescription: '1 vCPU 0.5 GB amd64'},
+                          {typeId: 't2.micro', typeDescription: '2 vCPU 1 GB amd64'},
+                          {typeId: 't2.small', typeDescription: '2 vCPU 2 GB amd64'},
+                          {typeId: 't4g.nano', typeDescription: '1 vCPU 1 GB arm64'},
+                          {typeId: 't4g.micro', typeDescription: '2 vCPU 1 GB arm64'},
+                        ]"
+                        item-value="typeId"
+                        item-title="typeDescription"
+                        variant="outlined"
+                        density="comfortable"
+                        class="mt-2"
+                    ></v-select>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-select
+                        v-model="currentConfig.maxRuntimeMinutes"
+                        label="Max Runtime (minutes)"
+                        :items="[5, 10, 15, 30, 60]"
+                        variant="outlined"
+                        density="comfortable"
+                        class="mt-2"
+                    ></v-select>
+                  </v-col>
+                </v-row>
             </v-window-item>
             <v-window-item value="1">
                 <!-- Config Loader -->
@@ -223,6 +260,9 @@
   </template>
     
 <script setup lang="ts">
+    // Check auth status first
+    import { getCurrentUser } from 'aws-amplify/auth';
+
     import type { Schema } from "../../amplify/data/resource"
     import { ref, computed, watch, onMounted } from 'vue';
     import { useAuthStore } from '../stores'
@@ -256,7 +296,9 @@ import { run } from 'node:test';
         { type: 'dense', units: 128, activation: 'relu' }
         ],
         dropout: 0.2,
-        useBatchNorm: true
+        useBatchNorm: true,
+        instanceType: 't4g.nano', // Default instance type
+        maxRuntimeMinutes: 10 // Default max runtime in minutes
     });
 
     // Tab control
@@ -365,12 +407,34 @@ import { run } from 'node:test';
     console.log('Training called');
     training.value = true;
     try {
+
+      const user = await getCurrentUser();
+      console.log('User is authenticated:', user);
+
       // Generate a client for the API
       const client = generateClient<Schema>();
 
       // Run model training
-      let result = client.queries.runTraining({
-        modelConfig: JSON.parse(JSON.stringify(currentConfig.value))
+      let currentConfigValue = currentConfig.value;
+      let modelConfig  =  JSON.stringify({  // JSON.parse(JSON.stringify(currentConfig.value))
+        modelName: currentConfigValue.modelName,
+        modelTrainingCodeName: currentConfigValue.modelTrainingCodeName,
+        learningRate: currentConfigValue.learningRate,
+        batchSize: currentConfigValue.batchSize,
+        epochs: currentConfigValue.epochs,
+        optimizer: currentConfigValue.optimizer,
+        layers: [ 
+          { type: 'dense', units: 128, activation: 'relu' }
+        ],
+        dropout: currentConfigValue.dropout,
+        useBatchNorm: currentConfigValue.useBatchNorm
+      })
+      console.log('Model configuration: ', modelConfig)
+      let result = await client.queries.runTraining({
+          modelConfig
+      },  
+      {
+        authMode: 'userPool',
       })
       console.log('Training instance launch result: ', result)
 
