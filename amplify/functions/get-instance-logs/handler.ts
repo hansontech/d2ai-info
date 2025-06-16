@@ -16,7 +16,7 @@ export const handler: Schema["getInstanceLogs"]["functionHandler"] = async (even
 
   const params = {
     logGroupName: LOG_GROUP_NAME,
-    logStreamName: [ `app-${instanceId}` ],
+    logStreamNames: [ `app-${instanceId}` ],
     // filterPattern: `{ $.instanceId = "${instanceId}" }`,
     startTime: Date.now() - parseInt(lastMinutes) * 60 * 1000,
     limit: 100

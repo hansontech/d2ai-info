@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
     <v-row class="controls">
-         <v-col cols="8" sm="8" md="8">
+         <v-col cols="7" sm="6" md="6">
           <v-select
             id="instance-status-select"
             v-model="selectedInstanceQueryStates"
@@ -39,6 +39,22 @@
             density="compact"
             hide-details
           ></v-select>
+        </v-col>
+        <!-- Refresh Button -->
+        <v-col cols="1" sm="2" md="2" >
+          <v-btn
+            @click="fetchInstances"
+            :disabled="loading"
+            :loading="loading"
+            variant="outlined"
+
+            block
+            size="default"
+            class="refresh-btn"
+          >
+            <v-icon start>mdi-redo</v-icon>
+            
+          </v-btn>
         </v-col>
     </v-row>  
     <v-row>

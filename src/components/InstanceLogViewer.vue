@@ -1,7 +1,8 @@
 <template>
     <v-container class="log-viewer">
-      <v-row class="controls">
-         <v-col cols="5" sm="4" md="4">
+      <v-row class="controls mb-4" align="center">
+        <!-- Instance Selection -->
+        <v-col cols="12" sm="6" md="5" lg="4">
           <v-select
             id="instance-select"
             v-model="selectedInstanceId"
@@ -13,81 +14,133 @@
             variant="outlined"
             density="compact"
             hide-details
-          ></v-select>
+            prepend-inner-icon="mdi-server"
+          />
         </v-col>
         
-        <v-col cols="4" sm="3" md="3">
+        <!-- Time Range Selection -->
+        <v-col cols="12" sm="4" md="3" lg="3">
           <v-select
             id="time-range"
             v-model="timeRange"
             label="Time Range"
-            :items="[
-              { value: '5', title: '5 mins' },
-              { value: '15', title: '15 mins' },
-              { value: '60', title: '1 hour' },
-              { value: '1440', title: '24 hours' }
-            ]"
+            :items="timeRangeOptions"
             item-value="value"
             item-title="title"
             @update:model-value="fetchLogs"
             variant="outlined"
             density="compact"
             hide-details
-          ></v-select>
+            prepend-inner-icon="mdi-clock-outline"
+          />
         </v-col>
         
-        <v-col cols="2" sm="2" md="2">
-          <button @click="fetchLogs" :disabled="loading">
-            <span v-if="!loading">Refresh</span>
-            <span v-else>Loading...</span>
-          </button>
-        </v-col>
-        <v-col cols="1" sm="1" md="1">
-          <label class="auto-refresh">
-            <input 
-              type="checkbox" 
-              v-model="autoRefreshEnabled" 
-              @change="toggleAutoRefresh"
-            >
-            <v-icon>mdi-refresh</v-icon> (30s)
-          </label>
-        </v-col>
-      </v-row>
-      
-      <v-row class="log-container">
-        <v-row v-if="loading" class="loading-indicator">
-          <v-progress-circular />
-          <p>Loading logs...</p>
-        </v-row>
-        
-        <v-row v-else-if="error" class="error-message">
-          <v-icon>mdi-alert</v-icon>
-          <p>{{ error }}</p>
-        </v-row>
-        
-        <v-row v-else-if="logs.length === 0" class="empty-state">
-          <v-col>No logs found for selected time range</v-col>
-        </v-row>
-        
-        <v-row v-else class="log-entries">
-          <v-row 
-            v-for="(log, index) in logs" 
-            :key="log.eventId || `${log.timestamp}-${index}`" 
-            class="log-entry"
-            :class="{'log-error': isErrorLog(log.message)}"
-          >
-            <v-col cols="2">
-              <span class="timestamp">
-                {{ formatTimestamp(log.timestamp) }}
-              </span>
+            <!-- Refresh Button -->
+            <v-col cols="6" sm="3" md="3" lg="2" >
+              <v-btn
+                @click="fetchLogs"
+                :disabled="loading"
+                :loading="loading"
+                variant="outlined"
+
+                block
+                size="default"
+                class="refresh-btn"
+              >
+                <v-icon start>mdi-redo</v-icon>
+                <span class="d-none d-sm-inline">Refresh</span>
+              </v-btn>
             </v-col>
-            <v-col cols="10">
-              <span class="message">
-                {{ log.message }}
-              </span>
+            
+            <!-- Auto Refresh Toggle -->
+            <v-col cols="2" sm="2" md="2" lg="2">
+              <label class="auto-refresh">
+                <input 
+                  type="checkbox" 
+                  v-model="autoRefreshEnabled" 
+                  @change="toggleAutoRefresh"
+                >
+                <v-icon>mdi-refresh</v-icon> 
+                <template v-if="mdAndUp">
+                  (30s)
+                </template>
+              </label>
+            </v-col>
+
+      </v-row>
+
+      <v-row class="log-container">
+        <v-col cols="12">
+          <!-- Loading State -->
+          <v-row v-if="loading" class="loading-indicator justify-center align-center">
+            <v-col cols="12" class="text-center">
+              <v-progress-circular indeterminate color="primary" class="mb-3" />
+              <p class="text-body-1">Loading logs...</p>
             </v-col>
           </v-row>
-        </v-row>
+          
+          <!-- Error State -->
+          <v-row v-else-if="error" class="error-message justify-center align-center">
+            <v-col cols="12" class="text-center">
+              <v-icon color="error" size="large" class="mb-2">mdi-alert</v-icon>
+              <p class="text-body-1 text-error">{{ error }}</p>
+            </v-col>
+          </v-row>
+          
+          <!-- Empty State -->
+          <v-row v-else-if="logs.length === 0" class="empty-state justify-center">
+            <v-col cols="12" class="text-center">
+              <v-icon size="64" color="grey-lighten-1" class="mb-3">mdi-file-document-outline</v-icon>
+              <p class="text-h6 text-grey-darken-1">No logs found for selected time range</p>
+            </v-col>
+          </v-row>
+          
+          <!-- Log Entries -->
+          <div v-else class="log-entries">
+            <!-- Header Row (Optional) -->
+            <v-row class="log-header mb-2 d-none d-sm-flex">
+              <v-col cols="12" sm="3" md="2" class="font-weight-bold text-caption">
+                TIMESTAMP
+              </v-col>
+              <v-col cols="12" sm="9" md="10" class="font-weight-bold text-caption">
+                MESSAGE
+              </v-col>
+            </v-row>
+            
+            <!-- Log Entry Rows -->
+            <v-row 
+              v-for="(log, index) in logs" 
+              :key="log.eventId || `${log.timestamp}-${index}`" 
+              class="log-entry mb-1"
+              :class="{'log-error': isErrorLog(log.message)}"
+              no-gutters
+            >
+              <!-- Timestamp Column -->
+              <v-col cols="12" sm="3" md="2" class="timestamp-col">
+                <v-chip
+                  size="small"
+                  variant="outlined"
+                  class="timestamp-chip"
+                  :color="isErrorLog(log.message) ? 'error' : 'primary'"
+                >
+                  {{ formatTimestamp(log.timestamp) }}
+                </v-chip>
+              </v-col>
+              
+              <!-- Message Column -->
+              <v-col cols="12" sm="9" md="10" class="message-col">
+                <div class="message-content">
+                  <span 
+                    class="message-text"
+                    :class="{'text-error': isErrorLog(log.message)}"
+                  >
+                    {{ log.message }}
+                  </span>
+                </div>
+              </v-col>
+            </v-row>
+          </div>
+        </v-col>
       </v-row>
     </v-container>
   </template>
@@ -98,7 +151,9 @@
   import type { EC2Instance, CloudWatchLogEntry, LogViewerProps } from '../types/ec2';
   import type { Schema } from "../../amplify/data/resource"
   import { generateClient } from 'aws-amplify/api';
-
+  import { useDisplay } from 'vuetify'
+  import { run } from 'node:test';
+  const { smAndDown, mdAndUp } = useDisplay() 
   const props = defineProps<LogViewerProps & { initialInstanceId?: string }>();
   
   // State
@@ -110,6 +165,14 @@
   const autoRefreshEnabled = ref(false);
   const refreshInterval = ref<number | null>(null);
   
+  // Time range options
+  const timeRangeOptions = [
+    { value: '5', title: '5 mins' },
+    { value: '15', title: '15 mins' },
+    { value: '60', title: '1 hour' },
+    { value: '240', title: '4 hours' },
+    { value: '1440', title: '24 hours' }
+  ]
   // Format timestamp
   const formatTimestamp = (timestamp?: number) => {
     if (!timestamp) return '';
@@ -137,6 +200,8 @@
     loading.value = true;
     error.value = null;
     
+    console.log('Fetching logs for instance:', selectedInstanceId.value, 'Time range:', timeRange.value);
+
     try {
       // API call for verification
       let result = await client.queries.getInstanceLogs({
@@ -146,7 +211,7 @@
         authMode: 'userPool',
       });
           
-      console.log('Fetched logs:', result.data);
+      // console.log('Fetched logs:', result.data);
 
       // Get the raw JSON data
       const rawData: object = JSON.parse(result.data as string);
@@ -154,6 +219,7 @@
       console.log('Row data type:', typeof rawData);
       // Validate and type cast the response
       if (rawData && typeof rawData === 'object' && 'events' in rawData && isValidLogData(rawData.events)) {
+        console.log('logs total: ',rawData.events.length)
         logs.value = rawData.events;
       } else {
         throw new Error('Invalid log data format');
