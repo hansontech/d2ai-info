@@ -15,6 +15,7 @@
     "@aws-amplify/ui-vue": "^4.3.1",
     "@aws-sdk/client-cloudwatch": "^3.825.0",
     "@aws-sdk/client-dynamodb": "^3.825.0",
+    "@aws-sdk/client-eventbridge": "^3.882.0",
     "@aws-sdk/lib-dynamodb": "^3.825.0",
     "@mdi/font": "^7.4.47",
     "@types/file-saver": "^2.0.7",

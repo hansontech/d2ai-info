@@ -10,7 +10,7 @@
           <v-select
             id="instance-status-select"
             v-model="selectedInstanceQueryStates"
-            label="Instance Status"
+            label="Instance Query by Status"
             :items="[ 'running', 'stopped', 'pending', 'stopping', 'terminated']"
             @update:model-value="fetchInstances"
             variant="outlined"
@@ -57,7 +57,7 @@
           </v-btn>
         </v-col>
     </v-row>  
-    <v-row>
+    <v-row v-if="instances.length > 0" class="log-section">
       <v-col cols="12">
         <div class="instance-grid">
           <InstanceCard 
@@ -67,6 +67,13 @@
             @select="selectInstance" 
           />
         </div>
+      </v-col>
+    </v-row>
+    <v-row v-else class="log-placeholder headline">
+      <v-col cols="12">
+        <p v-if="loading">Loading instances...</p>
+        <p v-else-if="error">{{ error }}</p>
+        <p v-else>Set queries above to find instances</p>
       </v-col>
     </v-row>
     <v-row v-if="selectedInstance" class="log-section">
@@ -191,4 +198,11 @@ onMounted(() => {
   border-radius: 8px;
   margin-top: 30px;
 }
+
+.headline {
+  border-bottom: 2px solid #1976d2;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
 </style>

@@ -13,6 +13,9 @@ export const storage = defineStorage({
         allow.authenticated.to(['read', 'write']),
         allow.guest.to(['read', 'write']) // additional actions such as "write" and "delete" can be specified depending on use cases
       ],
+      'uploads/*': [
+        allow.authenticated.to(['read', 'write', 'delete']),
+      ],
       'profile-pictures/{entity_id}/*': [
         allow.guest.to(['read']),
         allow.entity('identity').to(['read', 'write', 'delete'])

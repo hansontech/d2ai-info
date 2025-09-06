@@ -6,6 +6,7 @@ import Login from '@/views/Login.vue';
 import Profile from '@/views/Profile.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import UserData from '@/views/UserData.vue'
+import UserTasks from '@/views/UserTasks.vue'
 
 import Todos from '@/components/Todos.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
@@ -35,7 +36,7 @@ export const routes: RouteRecordRaw[] = [
     children: [
       { path: 'dashboard', component: Dashboard },
       { path: 'training', component: ModelConfiguration },
-      { path: 'tasks', component: Todos },
+      { path: 'tasks', component: UserTasks },
       { path: 'data', component: UserData },
       // more user-specific pages
     ]

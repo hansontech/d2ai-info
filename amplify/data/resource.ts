@@ -3,6 +3,7 @@ import { sayHello } from "../functions/say-hello/reseouce"
 import { runTraining } from "../functions/run-training/reseouce"
 import { getInstanceLogs } from "../functions/get-instance-logs/reseouce"
 import { queryInstances } from "../functions/query-instances/reseouce";
+import { dockerProcessing } from "../functions/docker-processing/reseouce";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -50,7 +51,14 @@ const schema = a.schema({
     .returns(a.json())
     .authorization(allow => [allow.authenticated()]) // .guest()])
     .handler(a.handler.function(queryInstances)),
-
+  dockerProcessing: a
+    .query()
+    .arguments({
+      s3key: a.string(),
+    })
+    .returns(a.json())
+    .authorization(allow => [allow.authenticated()]) // .guest()])
+    .handler(a.handler.function(dockerProcessing)),
 });
 
 export type Schema = ClientSchema<typeof schema>;

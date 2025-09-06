@@ -2,7 +2,7 @@
     <v-container fluid>
       <v-card>
         <v-tabs v-model="activeTab">
-            <v-tab value="0">Configure</v-tab>
+            <v-tab value="0">Run Training</v-tab>
             <v-tab value="1">Load Configuration</v-tab>
         </v-tabs>
         <v-card-text>
@@ -274,7 +274,6 @@
         } from 'aws-amplify/storage';
     import { generateClient } from 'aws-amplify/api';
     import { useDisplay } from 'vuetify'
-import { run } from 'node:test';
     const { smAndDown, mdAndUp } = useDisplay() 
 
     // Get current user's S3 prefix

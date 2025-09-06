@@ -94,6 +94,23 @@ yum install -y docker
 systemctl start docker
 systemctl enable docker
 
+# Install CloudWatch agent, monitoring of Docker application logs 
+
+# Detect OS and architecture
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m)
+
+# Map architecture names
+case $ARCH in
+    x86_64) ARCH_NAME="amd64" ;;
+    aarch64) ARCH_NAME="arm64" ;;
+    *) echo "Unsupported architecture: $ARCH"; exit 1 ;;
+esac
+
+# Download using AWS CLI (if available) or wget
+aws s3 cp s3://amazoncloudwatch-agent/amazon_linux/$ARCH_NAME/latest/amazon-cloudwatch-agent.rpm .
+rpm -U ./amazon-cloudwatch-agent.rpm
+
 # Add ec2-user to docker group (for later SSH access)
 usermod -aG docker ec2-user
 
