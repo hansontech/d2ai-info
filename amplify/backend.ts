@@ -1,9 +1,12 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { Stack } from "aws-cdk-lib";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import {
   CorsHttpMethod,
   HttpApi,
   HttpMethod,
+  DomainName,
+  ApiMapping
 } from "aws-cdk-lib/aws-apigatewayv2";
 import {
   HttpIamAuthorizer,
@@ -105,6 +108,23 @@ const apiPolicy = new Policy(apiStack, "ApiPolicy", {
 backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(apiPolicy);
 backend.auth.resources.unauthenticatedUserIamRole.attachInlinePolicy(apiPolicy);
 
+const acmCertificateArn = 'arn:aws:acm:ap-southeast-2:414327512415:certificate/1c96feb8-4d42-44e3-a28b-a73bc8ad92b6'
+const acmCertificate = acm.Certificate.fromCertificateArn(
+  apiStack,
+  "ApiCert",
+  acmCertificateArn
+);
+
+const domain = new DomainName(apiStack, "CustomDomain", {
+  domainName: "api.d2ai.info",
+  certificate: acmCertificate, // ACM cert for d2ai.info 
+});
+
+new ApiMapping(apiStack, "ApiMapping", {
+  api: httpApi,
+  domainName: domain,
+  stage: httpApi.defaultStage!,
+});
 // add outputs to the configuration file (usually amplify_outputs.json)
 // need it for resources outside Amplify’s standard categories (like a custom HttpApi via CDK)
 backend.addOutput({
@@ -120,9 +140,9 @@ backend.addOutput({
 });
 
 // Get the DynamoDB table
-const UserInstancesTableName = 'd2ai-user-instances'
+const userInstancesTableName = 'd2ai-user-instances'
 const userInstancesInstanceIndexName = "instanceId-index"
-const LogGroupName = '/d2ai/instance-logs'
+const logGroupName = '/d2ai/instance-logs'
 
 // Additional IAM policies can be added here if needed
 backend.runTraining.resources.lambda.addToRolePolicy(
@@ -194,14 +214,14 @@ backend.updateInstanceState.resources.lambda.addToRolePolicy(
 );
 
 // Add environment variables
-backend.runTraining.addEnvironment('LOG_GROUP', LogGroupName);
+backend.runTraining.addEnvironment('LOG_GROUP', logGroupName);
 backend.runTraining.addEnvironment('USER_INSTANCES_INSTANCE_INDEX', userInstancesInstanceIndexName);
-backend.runTraining.addEnvironment('USER_INSTANCES_TABLE_NAME', UserInstancesTableName);
-backend.queryInstances.addEnvironment('USER_INSTANCES_TABLE_NAME', UserInstancesTableName);
-backend.getInstanceLogs.addEnvironment('USER_INSTANCES_TABLE_NAME', UserInstancesTableName);
-backend.getInstanceLogs.addEnvironment('LOG_GROUP', LogGroupName);
-backend.getInstanceStatus.addEnvironment('USER_INSTANCES_TABLE_NAME', UserInstancesTableName);
-backend.updateInstanceState.addEnvironment('USER_INSTANCES_TABLE_NAME', UserInstancesTableName);
+backend.runTraining.addEnvironment('USER_INSTANCES_TABLE_NAME', userInstancesTableName);
+backend.queryInstances.addEnvironment('USER_INSTANCES_TABLE_NAME', userInstancesTableName);
+backend.getInstanceLogs.addEnvironment('USER_INSTANCES_TABLE_NAME', userInstancesTableName);
+backend.getInstanceLogs.addEnvironment('LOG_GROUP', logGroupName);
+backend.getInstanceStatus.addEnvironment('USER_INSTANCES_TABLE_NAME', userInstancesTableName);
+backend.updateInstanceState.addEnvironment('USER_INSTANCES_TABLE_NAME', userInstancesTableName);
 backend.updateInstanceState.addEnvironment('USER_INSTANCES_INSTANCE_INDEX', userInstancesInstanceIndexName);
 
 // Create EventBridge rule for EC2 state changes
