@@ -109,12 +109,12 @@ backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(apiPolicy);
 backend.auth.resources.unauthenticatedUserIamRole.attachInlinePolicy(apiPolicy);
 
 // Detect environment
-const envName = Stack.of(apiStack).stackName.includes("sandbox")
-  ? "sandbox"
-  : "non-sandbox";
-
+// Check if running in sandbox mode
+const isSandbox = !process.env.AWS_BRANCH || process.env.AWS_BRANCH === 'sandbox';
+const environment = process.env.AWS_BRANCH || 'sandbox';
+console.log("Environment Name:", environment);
 // Only create custom domain in non-sandbox
-if (envName !== "sandbox") {
+if (isSandbox === false) {
   const acmCertificateArn = 'arn:aws:acm:ap-southeast-2:414327512415:certificate/1c96feb8-4d42-44e3-a28b-a73bc8ad92b6'
   const acmCertificate = acm.Certificate.fromCertificateArn(
     apiStack,
