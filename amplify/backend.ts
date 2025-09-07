@@ -108,38 +108,59 @@ const apiPolicy = new Policy(apiStack, "ApiPolicy", {
 backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(apiPolicy);
 backend.auth.resources.unauthenticatedUserIamRole.attachInlinePolicy(apiPolicy);
 
-const acmCertificateArn = 'arn:aws:acm:ap-southeast-2:414327512415:certificate/1c96feb8-4d42-44e3-a28b-a73bc8ad92b6'
-const acmCertificate = acm.Certificate.fromCertificateArn(
-  apiStack,
-  "ApiCert",
-  acmCertificateArn
-);
+// Detect environment
+const envName = Stack.of(apiStack).stackName.includes("sandbox")
+  ? "sandbox"
+  : "non-sandbox";
 
-const domain = new DomainName(apiStack, "CustomDomain", {
-  domainName: "api.d2ai.info",
-  certificate: acmCertificate, // ACM cert for d2ai.info 
-});
+// Only create custom domain in non-sandbox
+if (envName !== "sandbox") {
+  const acmCertificateArn = 'arn:aws:acm:ap-southeast-2:414327512415:certificate/1c96feb8-4d42-44e3-a28b-a73bc8ad92b6'
+  const acmCertificate = acm.Certificate.fromCertificateArn(
+    apiStack,
+    "ApiCert",
+    acmCertificateArn
+  );
 
-new ApiMapping(apiStack, "ApiMapping", {
-  api: httpApi,
-  domainName: domain,
-  stage: httpApi.defaultStage!,
-});
-// add outputs to the configuration file (usually amplify_outputs.json)
-// need it for resources outside Amplify’s standard categories (like a custom HttpApi via CDK)
-backend.addOutput({
-  custom: {
-    API: {
-      [httpApi.httpApiName!]: {
-        endpoint: httpApi.url,
-        region: Stack.of(httpApi).region,
-        apiName: httpApi.httpApiName,
+  const domain = new DomainName(apiStack, "CustomDomain", {
+    domainName: "api.d2ai.info",
+    certificate: acmCertificate, // ACM cert for d2ai.info 
+  });
+
+  new ApiMapping(apiStack, "ApiMapping", {
+    api: httpApi,
+    domainName: domain,
+    stage: httpApi.defaultStage!,
+  });
+  // add outputs to the configuration file (usually amplify_outputs.json)
+  // need it for resources outside Amplify’s standard categories (like a custom HttpApi via CDK)
+  backend.addOutput({
+    custom: {
+      API: {
+        [httpApi.httpApiName!]: {
+          endpoint: `https://api.d2ai.info`,
+          region: Stack.of(httpApi).region,
+          apiName: httpApi.httpApiName,
+        },
       },
     },
-  },
-});
-
-// Get the DynamoDB table
+  });
+} else {
+  // add outputs to the configuration file (usually amplify_outputs.json)
+  // need it for resources outside Amplify’s standard categories (like a custom HttpApi via CDK)
+  backend.addOutput({
+    custom: {
+      API: {
+        [httpApi.httpApiName!]: {
+          endpoint: httpApi.url,
+          region: Stack.of(httpApi).region,
+          apiName: httpApi.httpApiName,
+        },
+      },
+    },
+  });
+}
+// Get   the DynamoDB table
 const userInstancesTableName = 'd2ai-user-instances'
 const userInstancesInstanceIndexName = "instanceId-index"
 const logGroupName = '/d2ai/instance-logs'
