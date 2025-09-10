@@ -16,7 +16,7 @@
                 <v-card elevation="2" class="pa-4">
                   <v-card-title class="headline">
                     <v-icon left>mdi-cloud-upload</v-icon>
-                    Upload Data File for Inference
+                    Upload Data File and Send to Inference API
                   </v-card-title>
                   <v-card-text>
                     <v-form ref="inferenceForm" v-model="validForm">
@@ -121,8 +121,10 @@
                       
                       <h4 class="text-subtitle-2 mb-2">Request Headers</h4>
                       <v-code class="mb-3">
+                        <pre>
 Content-Type: application/json
-Authorization: AWS4-HMAC-SHA256 Credential=...
+Authorization: Bearer {access_token}
+                        </pre>
                       </v-code>
 
                       <h4 class="text-subtitle-2 mb-2">Request Body</h4>
@@ -215,8 +217,8 @@ Authorization: AWS4-HMAC-SHA256 Credential=...
 
                   <h3 class="text-h6 mb-3">3. Using the Token with the API</h3>
                   <v-code class="mb-4">
-curl -X POST "https://{{ apiHostname }}/inference" \
-  -H "Authorization: Bearer {access_token}"
+<pre>curl -X POST "https://{{ apiHostname }}/inference"
+    -H "Authorization: Bearer {access_token}"</pre>
                   </v-code>
 
 
