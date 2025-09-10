@@ -12,6 +12,7 @@ import Todos from '@/components/Todos.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import MarketResearch from '@/views/MarketResearch.vue';
 import ModelConfiguration from '@/views/ModelConfiguration.vue';
+import InferenceAPI from '@/views/InferenceAPI.vue';
 
 // Define routes with proper type
 export const routes: RouteRecordRaw[] = [
@@ -38,6 +39,7 @@ export const routes: RouteRecordRaw[] = [
       { path: 'training', component: ModelConfiguration },
       { path: 'tasks', component: UserTasks },
       { path: 'data', component: UserData },
+      { path: 'inference', component: InferenceAPI },
       // more user-specific pages
     ]
   },

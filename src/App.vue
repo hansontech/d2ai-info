@@ -146,7 +146,7 @@ onBeforeUnmount(() => {
     </v-main>
     <v-navigation-drawer v-if="authStore.isLoggedIn && showSidebar"
       color="grey-lighten-4"
-      width="140"
+      width="150"
       v-model="drawer"
       :permanent="!isMobile"
       :temporary="isMobile"

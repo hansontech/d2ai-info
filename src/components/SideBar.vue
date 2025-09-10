@@ -6,7 +6,8 @@ const navItems = [
   { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/user/dashboard' },
   { title: 'Data', icon: 'mdi-database', to: '/user/data' },
   { title: 'Training', icon: 'mdi-compass', to: '/user/training' },
-  { title: 'Tasks', icon: 'mdi-play', to: '/user/tasks' },
+  { title: 'Tasks', icon: 'mdi-play-pause', to: '/user/tasks' },
+  { title: 'Inference', icon: 'mdi-play-circle', to: '/user/inference' },
 ];
 
 
@@ -22,6 +23,7 @@ onMounted(async () => {
       :key="item.title"
       :to="item.to">
       <v-list-item-title class="text-body-1">
+        <v-icon left>{{ item.icon }}</v-icon>
         {{ item.title }}
       </v-list-item-title>
     </v-list-item>
